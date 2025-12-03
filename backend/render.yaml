@@ -1,0 +1,12 @@
+# Render Blueprint for Backend Deployment
+services:
+  - type: web
+    name: metasurface-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    autoDeploy: true
+
