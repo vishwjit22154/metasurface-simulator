@@ -309,7 +309,6 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
 
 // Simple heatmap component for phase distributions
 const PhaseHeatmap: React.FC<{ data: number[][]; title: string }> = ({ data, title }) => {
-  const rows = data.length;
   const cols = data[0]?.length || 0;
 
   // Use fixed range for consistent color mapping between ideal and quantized

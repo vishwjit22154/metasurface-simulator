@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, Chip } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 
 interface CodingPatternVisualizationProps {
   phaseData: number[][];
@@ -12,7 +12,6 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
   nBits,
   title,
 }) => {
-  const rows = phaseData.length;
   const cols = phaseData[0]?.length || 0;
   const M_states = Math.pow(2, nBits);
 
