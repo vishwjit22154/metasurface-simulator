@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, Chip } from '@mui/material';
+import { Box, Typography, Paper, Chip, useMediaQuery, useTheme } from '@mui/material';
 
 interface BeamSteeringScenarioProps {
   theta_inc: number;
@@ -16,6 +16,10 @@ const BeamSteeringScenario: React.FC<BeamSteeringScenarioProps> = ({
   phi_steer,
   theta_peak,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  // Use viewBox for responsive SVG
   const width = 900;
   const height = 500;
   const centerX = width / 2;
@@ -55,13 +59,22 @@ const BeamSteeringScenario: React.FC<BeamSteeringScenarioProps> = ({
   const normalEndY = surfaceY - normalLength;
 
   return (
-    <Paper elevation={3} sx={{ p: 3, border: '2px solid #1976d2' }}>
-      <Typography variant="h6" gutterBottom fontWeight="bold" textAlign="center">
-        🔬 Reflective Metasurface - 2D Cross-Section View (Plane of Incidence)
+    <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 3 }, border: '2px solid #1976d2' }}>
+      <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold" textAlign="center">
+        🔬 Reflective Metasurface - 2D Cross-Section View {!isMobile && "(Plane of Incidence)"}
       </Typography>
       
-      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-        <svg width={width} height={height} style={{ border: '1px solid #e0e0e0', borderRadius: '8px', background: 'linear-gradient(to bottom, #e3f2fd 0%, #ffffff 50%, #f5f5f5 100%)' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, width: '100%', overflow: 'hidden' }}>
+        <svg 
+          viewBox={`0 0 ${width} ${height}`}
+          style={{ 
+            width: '100%', 
+            maxWidth: '900px',
+            height: 'auto',
+            border: '1px solid #e0e0e0', 
+            borderRadius: '8px', 
+            background: 'linear-gradient(to bottom, #e3f2fd 0%, #ffffff 50%, #f5f5f5 100%)' 
+          }}>
           <defs>
             {/* Arrow markers */}
             <marker id="arrowIncident" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
@@ -344,60 +357,67 @@ const BeamSteeringScenario: React.FC<BeamSteeringScenarioProps> = ({
       </Box>
 
       {/* Explanation */}
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mt: 2 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        gap: 1, 
+        flexWrap: 'wrap', 
+        justifyContent: 'center', 
+        mt: 2,
+        px: { xs: 0.5, sm: 2 }
+      }}>
         <Chip 
           label={`Incident: θᵢ=${theta_inc}°, φᵢ=${phi_inc}°`} 
           color="warning" 
           size="small" 
-          sx={{ fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8125rem' } }}
         />
         <Chip 
           label={`Desired: θᵣ=${theta_steer}°, φᵣ=${phi_steer}°`} 
           color="success" 
           size="small" 
-          sx={{ fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8125rem' } }}
         />
         <Chip 
           label={`Actual: θ=${theta_peak.toFixed(1)}°`} 
           color="info" 
           size="small" 
-          sx={{ fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8125rem' } }}
         />
         <Chip 
           label={`Error: ${Math.abs(theta_peak - theta_steer).toFixed(1)}°`} 
           color={Math.abs(theta_peak - theta_steer) < 2 ? 'success' : 'warning'}
           size="small" 
-          sx={{ fontWeight: 'bold' }}
+          sx={{ fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.8125rem' } }}
         />
       </Box>
 
-      <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
-        <Typography variant="body2" fontWeight="bold" gutterBottom>
+      <Box sx={{ mt: 2, p: { xs: 1.5, sm: 2 }, bgcolor: 'info.light', borderRadius: 1 }}>
+        <Typography variant="body2" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
           🔬 How Reflective Metasurface Works:
         </Typography>
-        <Typography variant="body2" component="div">
-          <ol style={{ marginTop: 4, marginBottom: 0, paddingLeft: 20 }}>
-            <li><strong>Incident wave</strong> (red) arrives at the metasurface at angle θᵢ={theta_inc}°</li>
-            <li><strong>Metasurface</strong> applies programmable phase shifts to each of the 16×16 elements</li>
-            <li><strong>Desired reflection</strong> (green dashed) aims for angle θᵣ={theta_steer}°</li>
-            <li><strong>Actual reflection</strong> (blue solid) achieves θ={theta_peak.toFixed(1)}° due to phase quantization</li>
-            <li><strong>Pointing error:</strong> {Math.abs(theta_peak - theta_steer).toFixed(1)}° difference caused by limited phase states</li>
+        <Typography variant="body2" component="div" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <ol style={{ marginTop: 4, marginBottom: 0, paddingLeft: isMobile ? 16 : 20 }}>
+            <li><strong>Incident wave</strong> (red) arrives at angle θᵢ={theta_inc}°</li>
+            <li><strong>Metasurface</strong> applies phase shifts to 16×16 elements</li>
+            <li><strong>Desired reflection</strong> (green) aims for θᵣ={theta_steer}°</li>
+            <li><strong>Actual reflection</strong> (blue) achieves θ={theta_peak.toFixed(1)}°</li>
+            <li><strong>Pointing error:</strong> {Math.abs(theta_peak - theta_steer).toFixed(1)}°</li>
           </ol>
         </Typography>
       </Box>
       
-      <Box sx={{ mt: 2, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
-        <Typography variant="body2" fontWeight="bold" gutterBottom color="error">
-          ⚠️ Physics Principle - Plane of Incidence:
-        </Typography>
-        <Typography variant="body2">
-          This 2D view shows the <strong>cross-section through the plane of incidence</strong> - the plane containing the 
-          incident ray, reflected ray, and surface normal (light gray dotted line). All three lie in the same plane 
-          (fundamental law of reflection). The surface normal is shown as a subtle reference line to help visualize 
-          the angle measurements. This simplified representation makes it easy to understand how the metasurface 
-          steers the beam by controlling phase gradients.
-        </Typography>
-      </Box>
+      {!isMobile && (
+        <Box sx={{ mt: 2, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
+          <Typography variant="body2" fontWeight="bold" gutterBottom color="error">
+            ⚠️ Physics Principle - Plane of Incidence:
+          </Typography>
+          <Typography variant="body2">
+            This 2D view shows the <strong>cross-section through the plane of incidence</strong> - the plane containing the 
+            incident ray, reflected ray, and surface normal. All three lie in the same plane 
+            (fundamental law of reflection).
+          </Typography>
+        </Box>
+      )}
     </Paper>
   );
 };

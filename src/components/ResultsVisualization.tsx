@@ -6,6 +6,8 @@ import {
   Chip,
   Card,
   CardContent,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   LineChart,
@@ -34,6 +36,8 @@ interface ResultsVisualizationProps {
 }
 
 const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nBits = 2, simulationParams }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // Prepare data for E-plane chart
   const ePlaneData = results.theta_range.map((theta, index) => ({
     theta,
@@ -52,58 +56,55 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
     <Box>
       {/* Performance Metrics */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold">
+        <Typography variant={isMobile ? "h6" : "h5"} gutterBottom fontWeight="bold">
           📊 Simulation Results
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
-          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <Card sx={{ bgcolor: 'warning.light' }}>
-              <CardContent>
-                <Typography variant="caption" color="text.secondary">
-                  Gain Loss
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {results.gain_loss_db.toFixed(2)} dB
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <Card sx={{ bgcolor: 'error.light' }}>
-              <CardContent>
-                <Typography variant="caption" color="text.secondary">
-                  Sidelobe Level
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {results.sidelobe_level_quant.toFixed(1)} dB
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <Card sx={{ bgcolor: 'info.light' }}>
-              <CardContent>
-                <Typography variant="caption" color="text.secondary">
-                  E-plane Error
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {results.pointing_error[0].toFixed(1)}°
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-            <Card sx={{ bgcolor: 'success.light' }}>
-              <CardContent>
-                <Typography variant="caption" color="text.secondary">
-                  Phase States
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {results.M_states} states
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+          gap: { xs: 1, sm: 2 }, 
+          mt: 1 
+        }}>
+          <Card sx={{ bgcolor: 'warning.light' }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                Gain Loss
+              </Typography>
+              <Typography variant={isMobile ? "body1" : "h6"} fontWeight="bold">
+                {results.gain_loss_db.toFixed(2)} dB
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ bgcolor: 'error.light' }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                Sidelobe Level
+              </Typography>
+              <Typography variant={isMobile ? "body1" : "h6"} fontWeight="bold">
+                {results.sidelobe_level_quant.toFixed(1)} dB
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ bgcolor: 'info.light' }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                E-plane Error
+              </Typography>
+              <Typography variant={isMobile ? "body1" : "h6"} fontWeight="bold">
+                {results.pointing_error[0].toFixed(1)}°
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ bgcolor: 'success.light' }}>
+            <CardContent sx={{ p: { xs: 1.5, sm: 2 }, '&:last-child': { pb: { xs: 1.5, sm: 2 } } }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+                Phase States
+              </Typography>
+              <Typography variant={isMobile ? "body1" : "h6"} fontWeight="bold">
+                {results.M_states} states
+              </Typography>
+            </CardContent>
+          </Card>
         </Box>
       </Box>
 
@@ -121,130 +122,88 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
       )}
 
       {/* Radiation Patterns */}
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold">
+      <Box sx={{ mb: { xs: 2, sm: 3 } }}>
+        <Typography variant={isMobile ? "h6" : "h5"} gutterBottom fontWeight="bold">
           📊 Radiation Patterns
         </Typography>
       </Box>
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-        <Box sx={{ flex: '1 1 500px', minWidth: '500px' }}>
-          <Paper elevation={3} sx={{ p: 2, border: '1px solid #e0e0e0' }}>
-            <Typography variant="h6" gutterBottom fontWeight="bold">
+      <Box sx={{ display: 'flex', gap: { xs: 2, sm: 3 }, flexWrap: 'wrap' }}>
+        <Box sx={{ flex: '1 1 100%', minWidth: { xs: '100%', md: '45%' } }}>
+          <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '1px solid #e0e0e0' }}>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold">
               E-plane Pattern (φ=0°)
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={ePlaneData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+            <ResponsiveContainer width="100%" height={isMobile ? 220 : 300}>
+              <LineChart data={ePlaneData} margin={{ top: 5, right: isMobile ? 10 : 20, left: isMobile ? 0 : 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="theta"
-                  label={{ value: 'θ (degrees)', position: 'insideBottom', offset: -5 }}
+                  label={{ value: 'θ (degrees)', position: 'insideBottom', offset: -5, fontSize: isMobile ? 10 : 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                 />
                 <YAxis
-                  label={{ value: 'Gain (dB)', angle: -90, position: 'insideLeft' }}
+                  label={{ value: 'dB', angle: -90, position: 'insideLeft', fontSize: isMobile ? 10 : 12 }}
                   domain={[-40, 5]}
-                  width={60}
+                  width={isMobile ? 35 : 60}
                   tickFormatter={(value) => `${value}`}
-                  ticks={[-40, -30, -20, -10, 0, 5]}
+                  ticks={[-40, -20, 0]}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                 />
                 <Tooltip />
-                <Legend />
-                <ReferenceLine y={-3} stroke="green" strokeDasharray="3 3" label="-3dB" />
-                <Line
-                  type="monotone"
-                  dataKey="ideal"
-                  stroke="#1976d2"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Ideal"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="quantized"
-                  stroke="#dc004e"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  name="Quantized"
-                />
+                <Legend wrapperStyle={{ fontSize: isMobile ? 10 : 12 }} />
+                <ReferenceLine y={-3} stroke="green" strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="ideal" stroke="#1976d2" strokeWidth={2} dot={false} name="Ideal" />
+                <Line type="monotone" dataKey="quantized" stroke="#dc004e" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Quantized" />
               </LineChart>
             </ResponsiveContainer>
-            <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <Chip
-                label={`Peak at ${results.theta_peak_quant[0].toFixed(1)}°`}
-                size="small"
-                color="primary"
-              />
-              <Chip
-                label={`Gain Loss: ${results.gain_loss_db.toFixed(2)} dB`}
-                size="small"
-                color="warning"
-              />
+            <Box sx={{ mt: 1, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+              <Chip label={`Peak: ${results.theta_peak_quant[0].toFixed(1)}°`} size="small" color="primary" sx={{ fontSize: { xs: '0.7rem', sm: '0.8125rem' } }} />
+              <Chip label={`Loss: ${results.gain_loss_db.toFixed(2)} dB`} size="small" color="warning" sx={{ fontSize: { xs: '0.7rem', sm: '0.8125rem' } }} />
             </Box>
           </Paper>
         </Box>
 
-        <Box sx={{ flex: '1 1 500px', minWidth: '500px' }}>
-          <Paper elevation={3} sx={{ p: 2, border: '1px solid #e0e0e0' }}>
-            <Typography variant="h6" gutterBottom fontWeight="bold">
+        <Box sx={{ flex: '1 1 100%', minWidth: { xs: '100%', md: '45%' } }}>
+          <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '1px solid #e0e0e0' }}>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold">
               H-plane Pattern (φ=90°)
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={hPlaneData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
+            <ResponsiveContainer width="100%" height={isMobile ? 220 : 300}>
+              <LineChart data={hPlaneData} margin={{ top: 5, right: isMobile ? 10 : 20, left: isMobile ? 0 : 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="theta"
-                  label={{ value: 'θ (degrees)', position: 'insideBottom', offset: -5 }}
+                  label={{ value: 'θ (degrees)', position: 'insideBottom', offset: -5, fontSize: isMobile ? 10 : 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                 />
                 <YAxis
-                  label={{ value: 'Gain (dB)', angle: -90, position: 'insideLeft' }}
+                  label={{ value: 'dB', angle: -90, position: 'insideLeft', fontSize: isMobile ? 10 : 12 }}
                   domain={[-40, 5]}
-                  width={60}
+                  width={isMobile ? 35 : 60}
                   tickFormatter={(value) => `${value}`}
-                  ticks={[-40, -30, -20, -10, 0, 5]}
+                  ticks={[-40, -20, 0]}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                 />
                 <Tooltip />
-                <Legend />
-                <ReferenceLine y={-3} stroke="green" strokeDasharray="3 3" label="-3dB" />
-                <Line
-                  type="monotone"
-                  dataKey="ideal"
-                  stroke="#1976d2"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Ideal"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="quantized"
-                  stroke="#dc004e"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  name="Quantized"
-                />
+                <Legend wrapperStyle={{ fontSize: isMobile ? 10 : 12 }} />
+                <ReferenceLine y={-3} stroke="green" strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="ideal" stroke="#1976d2" strokeWidth={2} dot={false} name="Ideal" />
+                <Line type="monotone" dataKey="quantized" stroke="#dc004e" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Quantized" />
               </LineChart>
             </ResponsiveContainer>
-            <Box sx={{ mt: 1, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              <Chip
-                label={`Peak at ${results.theta_peak_quant[1].toFixed(1)}°`}
-                size="small"
-                color="primary"
-              />
-              <Chip
-                label={`Sidelobe: ${results.sidelobe_level_quant.toFixed(1)} dB`}
-                size="small"
-                color="error"
-              />
+            <Box sx={{ mt: 1, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+              <Chip label={`Peak: ${results.theta_peak_quant[1].toFixed(1)}°`} size="small" color="primary" sx={{ fontSize: { xs: '0.7rem', sm: '0.8125rem' } }} />
+              <Chip label={`Sidelobe: ${results.sidelobe_level_quant.toFixed(1)} dB`} size="small" color="error" sx={{ fontSize: { xs: '0.7rem', sm: '0.8125rem' } }} />
             </Box>
           </Paper>
         </Box>
       </Box>
 
       {/* Phase Distributions */}
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', mt: 3, mb: 3 }}>
-        <Box sx={{ flex: '1 1 500px', minWidth: '500px' }}>
-          <Paper elevation={3} sx={{ p: 2, border: '1px solid #e0e0e0' }}>
-            <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
+      <Box sx={{ display: 'flex', gap: { xs: 2, sm: 3 }, flexWrap: 'wrap', mt: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 3 } }}>
+        <Box sx={{ flex: '1 1 100%', minWidth: { xs: '100%', md: '45%' } }}>
+          <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '1px solid #e0e0e0' }}>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold" color="primary">
               Ideal Phase Distribution
             </Typography>
             <Box sx={{ width: '100%', maxWidth: '600px', margin: '0 auto', mt: 1 }}>
@@ -253,9 +212,9 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
           </Paper>
         </Box>
 
-        <Box sx={{ flex: '1 1 500px', minWidth: '500px' }}>
-          <Paper elevation={3} sx={{ p: 2, border: '1px solid #e0e0e0' }}>
-            <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
+        <Box sx={{ flex: '1 1 100%', minWidth: { xs: '100%', md: '45%' } }}>
+          <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '1px solid #e0e0e0' }}>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold" color="primary">
               Quantized Phase ({results.M_states} States)
             </Typography>
             <Box sx={{ width: '100%', maxWidth: '600px', margin: '0 auto', mt: 1 }}>
@@ -266,8 +225,8 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
       </Box>
 
       {/* Discrete Coding Pattern Visualization */}
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
+      <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+        <Typography variant={isMobile ? "h6" : "h5"} gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
           🎨 Discrete Coding Pattern Representation
         </Typography>
         <CodingPatternVisualization
@@ -278,12 +237,12 @@ const ResultsVisualization: React.FC<ResultsVisualizationProps> = ({ results, nB
       </Box>
 
       {/* Performance Analysis */}
-      <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 2, border: '2px solid', borderColor: 'info.main' }}>
-        <Typography variant="body2" fontWeight="bold" gutterBottom>
+      <Box sx={{ mt: { xs: 2, sm: 3 }, p: { xs: 1.5, sm: 2 }, bgcolor: 'info.light', borderRadius: 2, border: '2px solid', borderColor: 'info.main' }}>
+        <Typography variant="body2" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
           📈 Performance Analysis:
         </Typography>
-        <Typography variant="body2" component="div">
-          <ul style={{ marginTop: 8, marginBottom: 0 }}>
+        <Typography variant="body2" component="div" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+          <ul style={{ marginTop: 8, marginBottom: 0, paddingLeft: isMobile ? 16 : 24 }}>
             <li>
               <strong>Pointing Accuracy:</strong> E-plane error is {results.pointing_error[0].toFixed(1)}°, 
               H-plane error is {results.pointing_error[1].toFixed(1)}°

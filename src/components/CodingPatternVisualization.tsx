@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, useMediaQuery, useTheme } from '@mui/material';
 
 interface CodingPatternVisualizationProps {
   phaseData: number[][];
@@ -12,6 +12,8 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
   nBits,
   title,
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const cols = phaseData[0]?.length || 0;
   const M_states = Math.pow(2, nBits);
 
@@ -66,8 +68,8 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
   const legend = generateLegend();
 
   return (
-    <Paper elevation={3} sx={{ p: 2, border: '1px solid #e0e0e0' }}>
-      <Typography variant="h6" gutterBottom fontWeight="bold" color="primary">
+    <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '1px solid #e0e0e0' }}>
+      <Typography variant={isMobile ? "subtitle1" : "h6"} gutterBottom fontWeight="bold" color="primary">
         {title}
       </Typography>
       
@@ -76,12 +78,12 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
         sx={{
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, 1fr)`,
-          gap: '2px',
+          gap: { xs: '1px', sm: '2px' },
           width: '100%',
           maxWidth: '600px',
           margin: '0 auto',
           bgcolor: '#333',
-          p: 1,
+          p: { xs: 0.5, sm: 1 },
           borderRadius: 2,
           border: '2px solid #666',
           mt: 2,
@@ -101,20 +103,20 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: cols <= 8 ? '10px' : '8px',
+                  fontSize: isMobile ? '5px' : (cols <= 8 ? '10px' : '8px'),
                   fontWeight: 'bold',
                   color: 'rgba(0,0,0,0.6)',
                   cursor: 'pointer',
                   '&:hover': {
-                    transform: 'scale(1.1)',
+                    transform: isMobile ? 'none' : 'scale(1.1)',
                     zIndex: 10,
-                    boxShadow: '0 0 8px rgba(0,0,0,0.5)',
+                    boxShadow: isMobile ? 'none' : '0 0 8px rgba(0,0,0,0.5)',
                   },
                   transition: 'transform 0.1s',
                 }}
                 title={`Element [${i},${j}]\nBit State: ${bitString}\nPhase: ${phaseValue.toFixed(1)}°`}
               >
-                {cols <= 16 && bitString}
+                {!isMobile && cols <= 16 && bitString}
               </Box>
             );
           })
@@ -122,11 +124,11 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
       </Box>
 
       {/* Legend */}
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+      <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+        <Typography variant="subtitle2" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
           {nBits}-bit Coding States ({M_states} states):
         </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 0.5, sm: 1 }, mt: 1 }}>
           {legend.map((state) => (
             <Box
               key={state.index}
@@ -136,23 +138,23 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
                 gap: 0.5,
                 border: '1px solid #ccc',
                 borderRadius: 1,
-                p: 0.5,
+                p: { xs: 0.3, sm: 0.5 },
                 bgcolor: '#f5f5f5',
               }}
             >
               <Box
                 sx={{
-                  width: 24,
-                  height: 24,
+                  width: { xs: 18, sm: 24 },
+                  height: { xs: 18, sm: 24 },
                   bgcolor: state.color,
                   border: '1px solid #333',
                   borderRadius: 0.5,
                 }}
               />
-              <Typography variant="caption" fontWeight="bold">
+              <Typography variant="caption" fontWeight="bold" sx={{ fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
                 {state.bitString}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.6rem', sm: '0.75rem' } }}>
                 ({state.phase})
               </Typography>
             </Box>
@@ -164,23 +166,27 @@ const CodingPatternVisualization: React.FC<CodingPatternVisualizationProps> = ({
       <Box
         sx={{
           mt: 2,
-          p: 1.5,
+          p: { xs: 1, sm: 1.5 },
           bgcolor: 'info.light',
           borderRadius: 1,
           border: '1px solid',
           borderColor: 'info.main',
         }}
       >
-        <Typography variant="caption" fontWeight="bold">
+        <Typography variant="caption" fontWeight="bold" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
           💡 Coding Pattern Info:
         </Typography>
-        <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
+        <Typography variant="caption" display="block" sx={{ mt: 0.5, fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
           Each colored square represents a metasurface element with a discrete phase state.
-          {nBits}-bit quantization provides {M_states} distinct states (
-          {nBits === 2 && '00, 01, 10, 11'}
-          {nBits === 3 && '000, 001, 010, 011, 100, 101, 110, 111'}
-          {nBits === 4 && '0000-1111'}
-          ), each with {(360 / M_states).toFixed(0)}° phase spacing.
+          {nBits}-bit quantization provides {M_states} distinct states{!isMobile && (
+            <>
+              {' ('}
+              {nBits === 2 && '00, 01, 10, 11'}
+              {nBits === 3 && '000-111'}
+              {nBits === 4 && '0000-1111'}
+              {')'}
+            </>
+          )}, each with {(360 / M_states).toFixed(0)}° phase spacing.
         </Typography>
       </Box>
     </Paper>
